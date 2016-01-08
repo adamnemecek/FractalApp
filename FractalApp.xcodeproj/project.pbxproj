@@ -11,8 +11,14 @@
 		9B1FAA171C3EAAA50003A5DE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA161C3EAAA50003A5DE /* ViewController.swift */; };
 		9B1FAA191C3EAAA50003A5DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B1FAA181C3EAAA50003A5DE /* Assets.xcassets */; };
 		9B1FAA1C1C3EAAA60003A5DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B1FAA1A1C3EAAA60003A5DE /* Main.storyboard */; };
-		9B1FAA271C3EAAA60003A5DE /* FractalAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA261C3EAAA60003A5DE /* FractalAppTests.swift */; };
+		9B1FAA271C3EAAA60003A5DE /* TestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA261C3EAAA60003A5DE /* TestModel.swift */; };
 		9B1FAA321C3EAAA60003A5DE /* FractalAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA311C3EAAA60003A5DE /* FractalAppUITests.swift */; };
+		9B1FAA401C3EB24A0003A5DE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA3F1C3EB24A0003A5DE /* Model.swift */; };
+		9B1FAA4D1C3EE50C0003A5DE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA3F1C3EB24A0003A5DE /* Model.swift */; };
+		9B1FAA511C3F38060003A5DE /* Complex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA501C3F38060003A5DE /* Complex.swift */; };
+		9B1FAA531C3F38490003A5DE /* TestComplex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA521C3F38490003A5DE /* TestComplex.swift */; };
+		9B1FAA551C3F43CA0003A5DE /* Mandelbrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA541C3F43CA0003A5DE /* Mandelbrot.swift */; };
+		9B1FAA571C3F44D70003A5DE /* TestMandelbrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1FAA561C3F44D70003A5DE /* TestMandelbrot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,11 +46,17 @@
 		9B1FAA1B1C3EAAA60003A5DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9B1FAA1D1C3EAAA60003A5DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B1FAA221C3EAAA60003A5DE /* FractalAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FractalAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9B1FAA261C3EAAA60003A5DE /* FractalAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FractalAppTests.swift; sourceTree = "<group>"; };
+		9B1FAA261C3EAAA60003A5DE /* TestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModel.swift; sourceTree = "<group>"; };
 		9B1FAA281C3EAAA60003A5DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B1FAA2D1C3EAAA60003A5DE /* FractalAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FractalAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B1FAA311C3EAAA60003A5DE /* FractalAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FractalAppUITests.swift; sourceTree = "<group>"; };
 		9B1FAA331C3EAAA60003A5DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9B1FAA3F1C3EB24A0003A5DE /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		9B1FAA461C3EE26F0003A5DE /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Observable.swift; path = FractalApp/Observable.swift; sourceTree = "<group>"; };
+		9B1FAA501C3F38060003A5DE /* Complex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Complex.swift; sourceTree = "<group>"; };
+		9B1FAA521C3F38490003A5DE /* TestComplex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestComplex.swift; sourceTree = "<group>"; };
+		9B1FAA541C3F43CA0003A5DE /* Mandelbrot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mandelbrot.swift; sourceTree = "<group>"; };
+		9B1FAA561C3F44D70003A5DE /* TestMandelbrot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestMandelbrot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +91,7 @@
 				9B1FAA251C3EAAA60003A5DE /* FractalAppTests */,
 				9B1FAA301C3EAAA60003A5DE /* FractalAppUITests */,
 				9B1FAA121C3EAAA50003A5DE /* Products */,
+				9B1FAA481C3EE2A40003A5DE /* Unused */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,6 +113,9 @@
 				9B1FAA181C3EAAA50003A5DE /* Assets.xcassets */,
 				9B1FAA1A1C3EAAA60003A5DE /* Main.storyboard */,
 				9B1FAA1D1C3EAAA60003A5DE /* Info.plist */,
+				9B1FAA3F1C3EB24A0003A5DE /* Model.swift */,
+				9B1FAA501C3F38060003A5DE /* Complex.swift */,
+				9B1FAA541C3F43CA0003A5DE /* Mandelbrot.swift */,
 			);
 			path = FractalApp;
 			sourceTree = "<group>";
@@ -107,8 +123,10 @@
 		9B1FAA251C3EAAA60003A5DE /* FractalAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				9B1FAA261C3EAAA60003A5DE /* FractalAppTests.swift */,
+				9B1FAA261C3EAAA60003A5DE /* TestModel.swift */,
 				9B1FAA281C3EAAA60003A5DE /* Info.plist */,
+				9B1FAA521C3F38490003A5DE /* TestComplex.swift */,
+				9B1FAA561C3F44D70003A5DE /* TestMandelbrot.swift */,
 			);
 			path = FractalAppTests;
 			sourceTree = "<group>";
@@ -120,6 +138,14 @@
 				9B1FAA331C3EAAA60003A5DE /* Info.plist */,
 			);
 			path = FractalAppUITests;
+			sourceTree = "<group>";
+		};
+		9B1FAA481C3EE2A40003A5DE /* Unused */ = {
+			isa = PBXGroup;
+			children = (
+				9B1FAA461C3EE26F0003A5DE /* Observable.swift */,
+			);
+			name = Unused;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,8 +277,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B1FAA511C3F38060003A5DE /* Complex.swift in Sources */,
+				9B1FAA401C3EB24A0003A5DE /* Model.swift in Sources */,
 				9B1FAA171C3EAAA50003A5DE /* ViewController.swift in Sources */,
 				9B1FAA151C3EAAA50003A5DE /* AppDelegate.swift in Sources */,
+				9B1FAA551C3F43CA0003A5DE /* Mandelbrot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,7 +289,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9B1FAA271C3EAAA60003A5DE /* FractalAppTests.swift in Sources */,
+				9B1FAA271C3EAAA60003A5DE /* TestModel.swift in Sources */,
+				9B1FAA4D1C3EE50C0003A5DE /* Model.swift in Sources */,
+				9B1FAA531C3F38490003A5DE /* TestComplex.swift in Sources */,
+				9B1FAA571C3F44D70003A5DE /* TestMandelbrot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

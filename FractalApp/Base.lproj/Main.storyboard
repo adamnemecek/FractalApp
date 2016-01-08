@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="6198" systemVersion="14A297b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="9052" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6198"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9052"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -641,16 +642,16 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="FractalApp" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>
-        <!--Window Controller - Window-->
+        <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="Fractal Viewer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -667,11 +668,101 @@
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="FractalApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PTn-rN-yMx">
+                                <rect key="frame" x="18" y="233" width="83" height="17"/>
+                                <animations/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Fractal Type:" id="zmn-dl-wTf">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Hp6-Lh-vVw">
+                                <rect key="frame" x="105" y="228" width="133" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="128" id="Kpl-OM-WYG"/>
+                                </constraints>
+                                <animations/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="7g4-gw-C9O" userLabel="Mandelbrot">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" title="Fractal Type Selector" id="bUr-YT-4ZS">
+                                        <items>
+                                            <menuItem title="Mandelbrot" state="on" id="9LH-Cj-Kby" userLabel="Mandelbrot"/>
+                                            <menuItem title="Julia" id="FsK-M1-hbR" userLabel="Julia"/>
+                                            <menuItem title="Sierpinski" id="3Zf-64-nLv" userLabel="Sierpinski"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="handleTypeChange:" target="XfG-lQ-9wD" id="6YI-TI-daW"/>
+                                </connections>
+                            </popUpButton>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h3u-NG-eb3">
+                                <rect key="frame" x="385" y="224" width="81" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="69" id="TlX-pt-GhS"/>
+                                </constraints>
+                                <animations/>
+                                <buttonCell key="cell" type="push" title="Run" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="F4M-NF-N9B">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="handleBtnRun:" target="XfG-lQ-9wD" id="QHJ-gi-T3D"/>
+                                </connections>
+                            </button>
+                            <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="aPb-Vk-bh2">
+                                <rect key="frame" x="243" y="230" width="140" height="20"/>
+                                <animations/>
+                            </progressIndicator>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xnk-D1-RKZ">
+                                <rect key="frame" x="20" y="9" width="440" height="22"/>
+                                <animations/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="R5J-kF-6L3">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" red="0.90980392156862744" green="0.9137254901960784" blue="0.90980392156862744" alpha="1" colorSpace="calibratedRGB"/>
+                                </textFieldCell>
+                            </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KvB-Oi-MWi">
+                                <rect key="frame" x="17" y="36" width="446" height="192"/>
+                                <animations/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="axesIndependently" imageFrameStyle="photo" id="tHi-Kr-mHd"/>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="PTn-rN-yMx" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="4uj-sg-ByO"/>
+                            <constraint firstAttribute="trailing" secondItem="h3u-NG-eb3" secondAttribute="trailing" constant="20" symbolic="YES" id="7Rr-sD-xM6"/>
+                            <constraint firstItem="PTn-rN-yMx" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="CCI-iJ-W07"/>
+                            <constraint firstItem="Hp6-Lh-vVw" firstAttribute="top" secondItem="h3u-NG-eb3" secondAttribute="top" id="HmH-Ww-EyV"/>
+                            <constraint firstItem="h3u-NG-eb3" firstAttribute="leading" secondItem="aPb-Vk-bh2" secondAttribute="trailing" constant="8" symbolic="YES" id="Ma5-ou-7mO"/>
+                            <constraint firstItem="aPb-Vk-bh2" firstAttribute="leading" secondItem="Hp6-Lh-vVw" secondAttribute="trailing" constant="8" symbolic="YES" id="MoJ-bU-Sux"/>
+                            <constraint firstItem="KvB-Oi-MWi" firstAttribute="trailing" secondItem="h3u-NG-eb3" secondAttribute="trailing" id="NDx-ZW-Mnw"/>
+                            <constraint firstItem="KvB-Oi-MWi" firstAttribute="leading" secondItem="xnk-D1-RKZ" secondAttribute="leading" id="QU4-aQ-nHd"/>
+                            <constraint firstItem="Hp6-Lh-vVw" firstAttribute="centerY" secondItem="PTn-rN-yMx" secondAttribute="centerY" id="UgA-Eg-4v3"/>
+                            <constraint firstItem="KvB-Oi-MWi" firstAttribute="top" secondItem="PTn-rN-yMx" secondAttribute="bottom" constant="8" symbolic="YES" id="a8Q-4F-0pm"/>
+                            <constraint firstAttribute="bottom" secondItem="xnk-D1-RKZ" secondAttribute="bottom" constant="9" id="bdF-V9-59b"/>
+                            <constraint firstItem="xnk-D1-RKZ" firstAttribute="trailing" secondItem="KvB-Oi-MWi" secondAttribute="trailing" id="d7M-1U-BML"/>
+                            <constraint firstItem="Hp6-Lh-vVw" firstAttribute="leading" secondItem="PTn-rN-yMx" secondAttribute="trailing" constant="8" symbolic="YES" id="gJB-HY-npL"/>
+                            <constraint firstItem="KvB-Oi-MWi" firstAttribute="leading" secondItem="PTn-rN-yMx" secondAttribute="leading" id="mme-Bg-4IN"/>
+                            <constraint firstItem="aPb-Vk-bh2" firstAttribute="bottom" secondItem="h3u-NG-eb3" secondAttribute="bottom" id="vSY-jA-Dsi"/>
+                            <constraint firstItem="xnk-D1-RKZ" firstAttribute="top" secondItem="KvB-Oi-MWi" secondAttribute="bottom" constant="8" symbolic="YES" id="vZ1-7c-Dn6"/>
+                        </constraints>
+                        <animations/>
                     </view>
+                    <connections>
+                        <outlet property="myBtnRun" destination="h3u-NG-eb3" id="0QC-iv-f2o"/>
+                        <outlet property="myImageView" destination="KvB-Oi-MWi" id="0Xw-Pa-TTN"/>
+                        <outlet property="myProgressBar" destination="aPb-Vk-bh2" id="GQ8-Lj-ljn"/>
+                        <outlet property="myTxtStatus" destination="xnk-D1-RKZ" id="6Rg-yR-w9A"/>
+                        <outlet property="myTypePopup" destination="Hp6-Lh-vVw" id="gQC-kp-Pxe"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
