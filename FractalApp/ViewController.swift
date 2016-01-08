@@ -101,6 +101,14 @@ class ViewController: NSViewController {
                 let M = Mandelbrot( )
                 M.run( )
                 self.myImageView.needsDisplay = true
+                
+                self.myTxtStatus.stringValue =
+                    String(format: "Zoom: %0.3fx Region:(%0.3g,%0.3g)->(%0.3g,%0.3g)",
+                        1.0/ModelFactory.getModel().getZoom(),
+                        ModelFactory.getModel().getFractalRange().origin.x,
+                        ModelFactory.getModel().getFractalRange().origin.y,
+                        ModelFactory.getModel().getFractalRange().maxX,
+                        ModelFactory.getModel().getFractalRange().maxY)
             })
         }
     
@@ -136,14 +144,6 @@ class ViewController: NSViewController {
                 Swift.print("Magnify: \(event)")
 
                 if (parent != nil) {
-                    parent.myTxtStatus.stringValue =
-                        String(format: "Zoom: %0.3fx Region:(%0.3g,%0.3g)->(%0.3g,%0.3g)",
-                            1.0/ModelFactory.getModel().getZoom(),
-                            ModelFactory.getModel().getFractalRange().origin.x,
-                            ModelFactory.getModel().getFractalRange().origin.y,
-                            ModelFactory.getModel().getFractalRange().maxX,
-                            ModelFactory.getModel().getFractalRange().maxY)
-                    
                     parent.startRun()
                 }
             }
