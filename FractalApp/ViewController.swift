@@ -23,6 +23,9 @@ class ViewController: NSViewController {
    
     let myMagGesture = MyMagGesture( )
     
+    let serialQueue = dispatch_queue_create("edu.ship.thb.FractalRun", DISPATCH_QUEUE_SERIAL);
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -94,9 +97,7 @@ class ViewController: NSViewController {
    
         if (myTypePopup.titleOfSelectedItem == FractalType.Mandelbrot.rawValue)
         {
-            let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
-            let queue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            dispatch_async(queue, {
+            dispatch_async(serialQueue, {
                 let M = Mandelbrot( )
                 M.run( )
                 self.myImageView.needsDisplay = true
@@ -128,20 +129,23 @@ class ViewController: NSViewController {
         
         
         override func magnifyWithEvent(event: NSEvent) {
-            
+
+            ModelFactory.getModel().magnify(event.magnification);
+
             if (event.phase == NSEventPhase.Ended) {
                 Swift.print("Magnify: \(event)")
 
-//                ModelFactory.getModel().magnify(event.magnification);
-//
-//                if (parent != nil) {
-//                    let z = ModelFactory.getModel().getZoom()
-//                    let r = ModelFactory.getModel().getFractalRange()
-//                    
-//                    parent.myTxtStatus.stringValue = "Zoom \(z)X \(r)"
-//                    
-//                    parent.startRun()
-//                }
+                if (parent != nil) {
+                    parent.myTxtStatus.stringValue =
+                        String(format: "Zoom: %0.3fx Region:(%0.3g,%0.3g)->(%0.3g,%0.3g)",
+                            1.0/ModelFactory.getModel().getZoom(),
+                            ModelFactory.getModel().getFractalRange().origin.x,
+                            ModelFactory.getModel().getFractalRange().origin.y,
+                            ModelFactory.getModel().getFractalRange().maxX,
+                            ModelFactory.getModel().getFractalRange().maxY)
+                    
+                    parent.startRun()
+                }
             }
         }
         

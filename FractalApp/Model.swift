@@ -38,7 +38,6 @@ class Model {
         switch(fractalTypeName) {
         case FractalType.Mandelbrot.rawValue:
             fractalType = FractalType.Mandelbrot
-//            fractalRange = Mandelbrot.defaultRange
             return true
             
         case FractalType.Julia.rawValue :
