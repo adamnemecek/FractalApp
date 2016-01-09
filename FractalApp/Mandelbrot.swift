@@ -1,11 +1,14 @@
-//
-//  Mandelbrot.swift
-//  FirstApp
-//
-//  Created by Tom Briggs on 12/28/15.
-//  Copyright © 2015 Tom Briggs. All rights reserved.
-//
-
+/**
+ Mandelbrot Calculation
+ ======================
+ 
+ This class manages calculation of the Mandelbrot set for use in the Fractal Viewer application.
+ The implementation uses GCD to dispatch calculation threads in parallel.
+ - author: Tom Briggs
+ - date: 12/28/15
+ - copyright:© 2015 Tom Briggs. All rights reserved.
+*/
+ 
 import Foundation
 import Cocoa
 import EventKit
@@ -13,14 +16,61 @@ import EventKit
 class Mandelbrot {
     
     static let defaultRange = NSRect(x: -2, y: -1.5, width: 2.5, height: 3)
+
+    // the default, global model
+    let model = ModelFactory.getModel()
+    
+    // queues used for GCD dispatch
+    let queueAsync = dispatch_queue_create("edu.ship.thb.Mandelbrot", DISPATCH_QUEUE_CONCURRENT)
+    
+    // a queue group is used to detect when the whole group has finished
+    let queueGroup = dispatch_group_create()
     
     
+    deinit {
+        Swift.print("Mandelbrot deiniting")
+    }
+    
+    /**
+        Launch the Mandelbrot calculation using all CPUs in the system. 
+      */
     func run( )
     {
-        let model = ModelFactory.getModel()
-
-        model.makeProgress(FractalProgress.init(progress: 0.0, lastLine: 0))
+        // the size of the calculation is the number of CPUs
+        let size = NSProcessInfo.processInfo().processorCount
         
+        // scatter the job across all CPU's
+        for p in 0 ..< size
+        {
+            // group dispatch - effectively called "dispatch_group_enter" at the beginning of each thread
+            // and "dispatch_group_exit" at the end.  Uses Swift's "closure" to launch the task
+            dispatch_group_async(queueGroup, queueAsync,
+                { self.calculateTask(pid: p, size: size)
+                })
+        }
+        
+        // wait for all queues to finish
+        dispatch_group_wait(queueGroup, DISPATCH_TIME_FOREVER)
+        
+        // report job all done
+        model.makeProgress(FractalProgress.init(progress: 100.0, lastLine: Int(model.getWindowSize().height)));
+        
+        model.recordRunState(state: RunState.init(state: RunState.Name.FINISHED))
+        Swift.print("Mandelbrot finished")
+
+    }
+    
+    /**
+        The actual worker task, calculating the Mandelbrot computation for an interleaved field.
+        With `size` workers, and this worker assigned `pid`, where `pid` in 0..<size, then this
+        worker will compute rows pid, pid+size, pid+2size, pid+3size, ... pid+nsize
+
+        - parameter pid: the process ID of the worker (0..< size)
+        - parameter size: the total number of workers
+    */
+    private func calculateTask(pid pid:Int, size:Int)
+    {
+    
         let numPixelsY = Int(model.getWindowSize().height)
         let numPixelsX = Int(model.getWindowSize().width)
         
@@ -30,41 +80,44 @@ class Mandelbrot {
         let stepY = Double(virtHeight) / Double(model.getWindowSize().height)
         let stepX = Double(virtWidth) / Double(model.getWindowSize().width)
         
-        var vy = Double(model.getFractalRange().minY)
+        var colorBuff = [NSColor](count: numPixelsX, repeatedValue: NSColor.clearColor())
         
+        // only worker 0 is responsible for reporting progress made
         var lastPercent : Double = 0.0
+        if (pid == 0) {
+            model.makeProgress(FractalProgress.init(progress: 0.0, lastLine: 0))
+        }
         
-        Swift.print("Generating mandelbrot for \(numPixelsX)x\(numPixelsY)")
-        
-        for var y = 0; y < numPixelsY; y++
+        // iterate over the rows of buffer
+        for var y = pid; y < numPixelsY; y+=size
         {
+            let vy = Double(model.getFractalRange().minY) + (stepY * Double(y))
             var vx = Double(model.getFractalRange().minX)
-            
+
+            // compute 1 row
             for var x = 0; x < numPixelsX; x++
             {
-                let c = calcMandPoint(vx, y:vy)
-                let i = ColorMap.mapColor(c)
-
-                model.setPixel(c: i, x: x, y: y)
+                let escTime = calcMandPoint(vx, y:vy)
+                colorBuff[x] = ColorMap.mapColor(escTime)
 
                 vx += stepX;
             }
             
-            vy = vy + stepY
-            let dy = Double(y) / Double(numPixelsY);
+            // this is now thread-safe
+            model.setPixel(colorBuff: colorBuff, y: y)
             
-            let pcnt = dy * 100.0;
-            if ((pcnt - lastPercent) > 10.0) {
-                model.makeProgress(FractalProgress.init(progress: pcnt, lastLine: y));
-                lastPercent = pcnt
+            // pid 0 shall update the model's progress meter
+            if (pid == 0) {
+                let dy = Double(y) / Double(numPixelsY);
+                let pcnt = dy * 100.0;
+                if ((pcnt - lastPercent) > 10.0) {
+                    model.makeProgress(FractalProgress.init(progress: pcnt, lastLine: y));
+                    lastPercent = pcnt
+                }
             }
-            
         }
-        
-        model.makeProgress(FractalProgress.init(progress: 100.0, lastLine: numPixelsY));
-        model.recordRunState(state: RunState.init(state: RunState.Name.FINISHED))
-        Swift.print("Mandelbrot finished")
     }
+    
     
     func calcMandPoint(x:Double, y:Double) -> Int {
         

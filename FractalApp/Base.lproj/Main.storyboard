@@ -693,7 +693,7 @@
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" title="Fractal Type Selector" id="bUr-YT-4ZS">
                                         <items>
-                                            <menuItem title="Mandelbrot" state="on" id="9LH-Cj-Kby" userLabel="Mandelbrot"/>
+                                            <menuItem title="Mandelbrot" id="9LH-Cj-Kby" userLabel="Mandelbrot"/>
                                             <menuItem title="Julia" id="FsK-M1-hbR" userLabel="Julia"/>
                                             <menuItem title="Sierpinski" id="3Zf-64-nLv" userLabel="Sierpinski"/>
                                         </items>
@@ -730,7 +730,7 @@
                                     <color key="backgroundColor" red="0.90980392156862744" green="0.9137254901960784" blue="0.90980392156862744" alpha="1" colorSpace="calibratedRGB"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KvB-Oi-MWi">
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KvB-Oi-MWi" customClass="CustomImageView" customModule="FractalApp" customModuleProvider="target">
                                 <rect key="frame" x="17" y="36" width="446" height="192"/>
                                 <animations/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="axesIndependently" imageFrameStyle="photo" id="tHi-Kr-mHd"/>

@@ -11,13 +11,30 @@ import Cocoa
 
 /**
 # Model
-
+=======
+ 
 Defines an application wide model as part of the MVC pattern.  The model holds the global
 state of the application.  
+ 
+As part of the revision to make the Mandelbrot model be thread-safe, the global Model was also
+ made thread-safe.  Part of this included adding a new "setPixel" method that would allow the
+ sending an entire row.  The pixel copying happens in a serial, high-priority dispatch queue
+ (Swift's replacement for Java's synchronized methods).
+
 */
 
 class Model {
 
+    private let queueSync : dispatch_queue_t = { () -> dispatch_queue_t in
+        let queueAttrs = dispatch_queue_attr_make_with_qos_class(
+            DISPATCH_QUEUE_SERIAL,
+            QOS_CLASS_USER_INITIATED /* Same as DISPATCH_QUEUE_PRIORITY_HIGH */,
+            0
+        );
+        
+        return dispatch_queue_create("edu.ship.thb.Model.synch",queueAttrs);
+    }()
+    
     private var fractalType : FractalType = FractalType.Mandelbrot
 
     /**
@@ -50,7 +67,6 @@ class Model {
 
         default: return false
         }
-        
     }
     
     /**
@@ -73,7 +89,9 @@ class Model {
     
     func setFractalRange( range : NSRect)
     {
-        fractalRange = range
+        dispatch_sync(queueSync, {
+            self.fractalRange = range
+        })
     }
     
     func getFractalRange( ) -> NSRect {
@@ -163,7 +181,9 @@ class Model {
      */
     func makeProgress(progress: FractalProgress)
     {
+     
         NSNotificationCenter.defaultCenter().postNotificationName("progress", object: progress)
+ 
     }
 
     /**
@@ -174,7 +194,9 @@ class Model {
      */
     func recordRunState(state state:RunState)
     {
+
         NSNotificationCenter.defaultCenter().postNotificationName("runState", object: state)
+
     }
     
     /**
@@ -183,26 +205,28 @@ class Model {
      */
     func handleWindowResize(size: NSSize)
     {
-        Swift.print("Resizing image & representation: \(size)")
-        
-        windowSize = size
-
-        if ((imgRep != nil) && (image.representations.contains(imgRep))) {
-            image.removeRepresentation(imgRep)
-        }
-        
-       imgRep = NSBitmapImageRep(bitmapDataPlanes: nil,
-                pixelsWide: Int(size.width),
-                pixelsHigh: Int(size.height),
-                bitsPerSample: 8,
-                samplesPerPixel: 3,
-                hasAlpha: false,
-                isPlanar: false,
-                colorSpaceName: NSCalibratedRGBColorSpace,
-                bytesPerRow: 0, bitsPerPixel: 0)!
+        dispatch_sync(queueSync, {
+            Swift.print("Resizing image & representation: \(size)")
             
-            image.addRepresentation(imgRep)
-            image.size = size
+            self.windowSize = size
+
+            if ((self.imgRep != nil) && (self.image.representations.contains(self.imgRep))) {
+                self.image.removeRepresentation(self.imgRep)
+            }
+            
+           self.imgRep = NSBitmapImageRep(bitmapDataPlanes: nil,
+                    pixelsWide: Int(size.width),
+                    pixelsHigh: Int(size.height),
+                    bitsPerSample: 8,
+                    samplesPerPixel: 3,
+                    hasAlpha: false,
+                    isPlanar: false,
+                    colorSpaceName: NSCalibratedRGBColorSpace,
+                    bytesPerRow: 0, bitsPerPixel: 0)!
+                
+                self.image.addRepresentation(self.imgRep)
+                self.image.size = size
+        })
     }
     
     /**
@@ -213,9 +237,61 @@ class Model {
     */
     func setPixel(c color:NSColor, x: Int, y: Int)
     {
-       imgRep.setColor(color, atX: x, y: y)
+        dispatch_sync(queueSync, {
+            self.imgRep.setColor(color, atX: x, y: y)
+        })
     }
     
+    /**
+     Sets the pixel at (x,y) to the given color
+     -parameter colorBuffer: the color for the pixel
+     -parameter x: the x cooridinate (in horizontal screen coordinates)
+     -parameter y: the y cooridinate (in horizontal screen coordinates)
+     */
+    func setPixel(colorBuff colorBuff:[NSColor], y: Int)
+    {
+        dispatch_sync(queueSync, {
+            for x in 0 ..< colorBuff.count
+            {
+                self.imgRep.setColor(colorBuff[x], atX: x, y: y)
+            }
+        })
+    }
+    
+    /**
+     Sets the pixel at (x,y) to the given color. 
+     also trigger the image for needs redisplay
+     -parameter colorBuffer: the color for the pixel
+     -parameter x: the x cooridinate (in horizontal screen coordinates)
+     -parameter y: the y cooridinate (in horizontal screen coordinates)
+     */
+    func setPixel(colorBuff colorBuff:[NSColor], offsetX: Int, y: Int)
+    {
+        dispatch_sync(queueSync, {
+            for x in 0 ..< colorBuff.count
+            {
+                self.imgRep.setColor(colorBuff[x], atX: x+offsetX, y: y)
+            }
+        })
+    }
+    
+    /**
+    Clears the pixel buffer 
+    */
+    func clearPixels( )
+    {
+        dispatch_sync(queueSync, {
+
+            for y in 0 ..< Int(self.imgRep.size.height)
+            {
+                for x in 0 ..< Int(self.imgRep.size.width)
+                {
+                    self.imgRep.setColor(NSColor.clearColor(), atX: x, y: y)
+                }
+            }
+            
+        })
+    }
     
     /**
         Recalculates the window size
@@ -226,13 +302,13 @@ class Model {
     {
         let factor = 1.0 - magnify
         
-        zoom = zoom * Double(factor)
+        self.zoom = self.zoom * Double(factor)
         
-        let origCenterX =  fractalRange.origin.x + (fractalRange.width/2)
-        let origCenterY = fractalRange.origin.y + (fractalRange.height/2)
+        let origCenterX =  self.fractalRange.origin.x + (self.fractalRange.width/2)
+        let origCenterY = self.fractalRange.origin.y + (self.fractalRange.height/2)
         
-        let adjWidth = fractalRange.width * CGFloat(factor)
-        let adjHeight = fractalRange.height * CGFloat(factor)
+        let adjWidth = self.fractalRange.width * CGFloat(factor)
+        let adjHeight = self.fractalRange.height * CGFloat(factor)
         
         let adjOriginX = origCenterX - adjWidth/2
         let adjOriginY = origCenterY - adjHeight/2
@@ -240,7 +316,7 @@ class Model {
         let origin = CGPoint(x: adjOriginX, y: adjOriginY)
         
         let newSize = CGSize(width: adjWidth, height: adjHeight)
-        fractalRange = NSRect(origin: origin, size: newSize)
+        self.fractalRange = NSRect(origin: origin, size: newSize)
     }
 
     
@@ -261,7 +337,7 @@ class ModelFactory {
     private static  let defaultModel : Model = Model( )
     
     static func getModel( ) -> Model {
-        Swift.print("ModelFactory: \(defaultModel)")
+        Swift.print("ModelFactory: \(defaultModel) @ \(unsafeAddressOf(defaultModel))")
         
         return ModelFactory.defaultModel;
     }

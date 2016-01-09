@@ -17,19 +17,18 @@ class ViewController: NSViewController {
     @IBOutlet weak var myTypePopup: NSPopUpButton!
     
     @IBOutlet weak var myTxtStatus: NSTextField!
-
     
-    @IBOutlet weak var myImageView: NSImageView!
+    @IBOutlet weak var myImageView: CustomImageView!
    
     let myMagGesture = MyMagGesture( )
     
-    let serialQueue = dispatch_queue_create("edu.ship.thb.FractalRun", DISPATCH_QUEUE_SERIAL);
-
+    let serialQueue = dispatch_queue_create("edu.ship.thb.ViewController", DISPATCH_QUEUE_SERIAL);
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         
+        myImageView.parent = self
         myImageView.image = ModelFactory.getModel().getFractalImage()
     
         if (myImageView.layer != nil) {
@@ -38,15 +37,16 @@ class ViewController: NSViewController {
 
         ModelFactory.getModel().handleWindowResize(myImageView.frame.size)
 
-        myImageView.addGestureRecognizer(myMagGesture)
         myMagGesture.parent = self;
+        myImageView.addGestureRecognizer(myMagGesture)
         
         
         NSNotificationCenter.defaultCenter().addObserverForName("progress", object: nil, queue: nil, usingBlock: { notification in
             
             if ((notification.name == "progress") && (notification.object is FractalProgress)) {
-                dispatch_sync(dispatch_get_main_queue()) {
+                dispatch_async(dispatch_get_main_queue()) {
                     self.myProgressBar.doubleValue = (notification.object as! FractalProgress).progress
+                    self.myImageView.needsDisplay = true
                     //myProgressBar.value = fp.value
                 } // end dispatch
             } // end if
@@ -56,16 +56,18 @@ class ViewController: NSViewController {
         NSNotificationCenter.defaultCenter().addObserverForName("runState", object: nil, queue: nil, usingBlock: { notification in
             
             if ((notification.name == "runState") && (notification.object is RunState)) {
-                dispatch_sync(dispatch_get_main_queue()) {
+                dispatch_async(dispatch_get_main_queue()) {
                     let rs : RunState = notification.object as! RunState
                     if (rs.state == RunState.Name.FINISHED)
                     {
                         self.myBtnRun.enabled = true
                         self.myProgressBar.doubleValue = 100.0
+                        self.myImageView.needsDisplay = true
                     }
                     
                     //myProgressBar.value = fp.value
                 } // end dispatch
+
             } // end if
         })  // end block & addobserver
         
@@ -87,30 +89,38 @@ class ViewController: NSViewController {
         
     }
     
-    private func startRun( )
+    
+    private func startMandelbrot( ) {
+        let M = Mandelbrot( )
+        M.run( )
+
+        self.myTxtStatus.stringValue =
+            String(format: "Zoom: %0.3fx Region:(%0.3g,%0.3g)->(%0.3g,%0.3g)",
+                1.0/ModelFactory.getModel().getZoom(),
+                ModelFactory.getModel().getFractalRange().origin.x,
+                ModelFactory.getModel().getFractalRange().origin.y,
+                ModelFactory.getModel().getFractalRange().maxX,
+                ModelFactory.getModel().getFractalRange().maxY)
+    }
+    
+    func startRun( )
     {
-        myBtnRun.enabled = false
         
-       ModelFactory.getModel().handleWindowResize(myImageView.frame.size)
-        
-        myImageView.image = ModelFactory.getModel().getFractalImage()
-   
-        if (myTypePopup.titleOfSelectedItem == FractalType.Mandelbrot.rawValue)
-        {
-            dispatch_async(serialQueue, {
-                let M = Mandelbrot( )
-                M.run( )
-                self.myImageView.needsDisplay = true
-                
-                self.myTxtStatus.stringValue =
-                    String(format: "Zoom: %0.3fx Region:(%0.3g,%0.3g)->(%0.3g,%0.3g)",
-                        1.0/ModelFactory.getModel().getZoom(),
-                        ModelFactory.getModel().getFractalRange().origin.x,
-                        ModelFactory.getModel().getFractalRange().origin.y,
-                        ModelFactory.getModel().getFractalRange().maxX,
-                        ModelFactory.getModel().getFractalRange().maxY)
-            })
-        }
+        dispatch_sync(serialQueue, {
+
+            self.myBtnRun.enabled = false
+            
+            ModelFactory.getModel().handleWindowResize(self.myImageView.frame.size)
+            
+            self.myImageView.image = ModelFactory.getModel().getFractalImage()
+       
+            if (self.myTypePopup.titleOfSelectedItem == FractalType.Mandelbrot.rawValue)
+            {
+                dispatch_async(self.serialQueue, {
+                    self.startMandelbrot()
+                })
+            }
+        })
     
     }
     
@@ -135,7 +145,6 @@ class ViewController: NSViewController {
         
         weak var parent : ViewController!
         
-        
         override func magnifyWithEvent(event: NSEvent) {
 
             ModelFactory.getModel().magnify(event.magnification);
@@ -150,6 +159,7 @@ class ViewController: NSViewController {
         }
         
     }
+    
 
 }
 
